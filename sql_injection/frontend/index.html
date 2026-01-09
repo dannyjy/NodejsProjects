@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Sql Injection Demo</title>
+</head>
+<body class="bg-gray-100 p-6">
+    
+    <div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+        <h1 class="text-2xl font-bold mb-4">SQL Injection Demo</h1>
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="username" name="username" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Login</button>
+        </form>
+        <div id="result" class="mt-4 text-center text-red-500"></div>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('http://localhost:3000/vulnerable/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.json();
+            console.log(response);
+            const resultDiv = document.getElementById('result');
+            if (response.ok) {
+                resultDiv.textContent = 'Login successful!';
+                resultDiv.classList.remove('text-red-500');
+                resultDiv.classList.add('text-green-500');
+            } else {
+                resultDiv.textContent = 'Login failed: ' + result.message;
+                resultDiv.classList.remove('text-green-500');
+                resultDiv.classList.add('text-red-500');
+            }
+        });
+    </script>
+</body>
+</html>
